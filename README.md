@@ -1,4 +1,4 @@
-# get-context.js
+# get-context
 
 > Chainable canvas context api wrapper.
 
