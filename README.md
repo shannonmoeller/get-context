@@ -25,7 +25,7 @@ With [Component](http://component.io):
 
 ### `getContext(element, type)`
 
-Creates an instance of a chainable canvas 2D-context api wrapper.
+Creates an instance of a chainable canvas context api wrapper. The `type` argument may be `'2d'` or `'webgl'`. Defaults to `'2d'`.
 
 ```js
 var canvas = document.createElement('canvas');
