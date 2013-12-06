@@ -1,6 +1,6 @@
 {
-  "name": "handlebars-layouts",
-  "version": "0.1.3",
-  "main": "handlebars-layouts.js",
-  "ignore": ["./!(handlebars-layouts.js)"]
+  "name": "get-context",
+  "version": "0.1.0",
+  "main": "get-context.js",
+  "ignore": ["./!(get-context.js)"]
 }
