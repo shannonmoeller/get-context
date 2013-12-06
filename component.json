@@ -3,13 +3,8 @@
   "version": "0.1.3",
   "description": "Chainable canvas.",
   "keywords": [
-    "dust",
-    "express",
-    "handlebars",
-    "jade",
-    "layout",
-    "mote",
-    "mustache"
+    "canvas",
+    "chain"
   ],
   "license": "MIT",
   "repo": "shannonmoeller/get-context",

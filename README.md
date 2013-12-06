@@ -1,44 +1,98 @@
-# Handlebars Layouts [![Build Status](https://travis-ci.org/shannonmoeller/get-context.png)](https://travis-ci.org/shannonmoeller/get-context)
+# get-context.js
 
-> Handlebars helpers which implement Jade-like layout blocks.
+> Chainable canvas context api wrapper.
 
-## Installation
+[![Build Status](https://travis-ci.org/shannonmoeller/get-context.png?branch=master)](https://travis-ci.org/shannonmoeller/get-context)
+[![NPM version](https://badge.fury.io/js/get-context.png)](http://badge.fury.io/js/get-context)
+[![Dependency Status](https://gemnasium.com/shannonmoeller/get-context.png)](https://gemnasium.com/shannonmoeller/get-context)
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/shannonmoeller/get-context/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
 
-### Server-side
+## Install
 
-#### ([Node.js](http://nodejs.org)):
+With [Node.js](http://nodejs.org):
 
-```sh
-$ npm install get-context
+    $ npm install get-context
+
+With [Bower](http://bower.io):
+
+    $ bower install shannonmoeller/get-context
+
+With [Component](http://component.io):
+
+    $ component install shannonmoeller/get-context
+
+## API
+
+### `getContext(element, type)`
+
+Creates an instance of a chainable canvas 2D-context api wrapper.
+
+```js
+var canvas = document.createElement('canvas');
+var context = require('get-context')(canvas);
+
+context
+    .set({
+        strokeStyle: '#0000ff',
+        lineCap: 'round'
+    })
+    .beginPath()
+        .arc(75, 75, 50, 0, Math.PI * 2, true) // Outer circle
+        .moveTo(110, 75)
+        .arc(75, 75, 35, 0, Math.PI, false)    // Mouth (clockwise)
+        .moveTo(65,65)
+        .arc(60, 65, 5, 0, Math.PI * 2, true)  // Left eye
+        .moveTo(95,65)
+        .arc(90, 65, 5, 0, Math.PI * 2, true)  // Right eye
+    .stroke();
 ```
 
-### Client-side
+### `.get(key)`
 
-#### ([bower](http://bower.io/)):
+Gets a single context property.
 
-```sh
-$ bower install get-context
+```js
+context.get('fillStyle');
+// returns #000000
 ```
 
-#### ([component(1)](http://component.io)):
+### `.get(array)`
 
-```sh
-$ component install shannonmoeller/get-context
+Gets multiple context properties.
+
+```js
+context.get(['fillStyle', 'strokeStyle']);
+// returns { fillStyle: '#000000', strokeStyle: '#000000' }
 ```
 
-## Example
+### `.set(key, value)`
 
+Sets a single context property.
 
-## Testing
+```js
+context.set('fillStyle', '#FF0000');
+// returns context
+```
+
+### `.set(object)`
+
+Sets multiple context properties.
+
+```js
+context.set({
+    fillStyle: '#FF0000',
+    strokeStyle: '#00FF00'
+});
+// returns context
+```
+## Test
 
 ```sh
-$ grunt test
+$ npm test
 ```
 
 [![browser support](http://ci.testling.com/shannonmoeller/get-context.png)](http://ci.testling.com/shannonmoeller/get-context)
 
 ## License
 
-MIT
-
-[![githalytics.com alpha](https://cruel-carlota.pagodabox.com/ae3a06cc73fded765f8492d78c66ad30 "githalytics.com")](http://githalytics.com/shannonmoeller/get-context)
+  MIT

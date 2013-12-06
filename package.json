@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "description": "Chainable canvas.",
   "keywords": [
-    "canvas"
+    "canvas",
+    "chain"
   ],
   "license": "MIT",
   "repository": {
@@ -30,12 +31,12 @@
     "scripts": "test/all.js",
     "browsers": {
       "android": [4],
-      "chrome": [29, 30, "canary"],
-      "ff": [23, 24, "nightly"],
+      "chrome": [30, 31, "canary"],
+      "ff": [24, 25, "nightly"],
       "ie": [8, 9, 10, 11],
       "ipad": [6],
       "iphone": [6],
-      "safari": [6]
+      "safari": [5.1, 6]
     }
   }
 }
