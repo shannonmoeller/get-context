@@ -1,11 +1,8 @@
-# get-context
+# `get-context`
 
-> Chainable canvas context api wrapper.
+[![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Chat][gitter-img]][gitter-url]
 
-[![Build Status](https://travis-ci.org/shannonmoeller/get-context.png?branch=master)](https://travis-ci.org/shannonmoeller/get-context)
-[![NPM version](https://badge.fury.io/js/get-context.png)](http://badge.fury.io/js/get-context)
-[![Dependency Status](https://gemnasium.com/shannonmoeller/get-context.png)](https://gemnasium.com/shannonmoeller/get-context)
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/shannonmoeller/get-context/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+Chainable canvas context api wrapper.
 
 ## Install
 
@@ -85,14 +82,27 @@ context.set({
 });
 // returns context
 ```
+
 ## Test
 
-```sh
-$ npm test
-```
+    $ npm test
 
-[![browser support](http://ci.testling.com/shannonmoeller/get-context.png)](http://ci.testling.com/shannonmoeller/get-context)
+----
 
-## License
+© 2015 Shannon Moeller <me@shannonmoeller.com>
 
-MIT
+Licensed under [MIT](http://shannonmoeller.com/mit.txt)
+
+[coveralls-img]: http://img.shields.io/coveralls/shannonmoeller/get-context/master.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/shannonmoeller/get-context
+[downloads-img]: http://img.shields.io/npm/dm/get-context.svg?style=flat-square
+[gitter-img]:    http://img.shields.io/badge/gitter-join_chat-1dce73.svg?style=flat-square
+[gitter-url]:    https://gitter.im/shannonmoeller/shannonmoeller
+[gittip-img]:    http://img.shields.io/gittip/shannonmoeller.svg?style=flat-square
+[gittip-url]:    https://www.gittip.com/shannonmoeller
+[npm-img]:       http://img.shields.io/npm/v/get-context.svg?style=flat-square
+[npm-url]:       https://npmjs.org/package/get-context
+[travis-img]:    http://img.shields.io/travis/shannonmoeller/get-context.svg?style=flat-square
+[travis-url]:    https://travis-ci.org/shannonmoeller/get-context
+[waffle-img]:    http://img.shields.io/github/issues/shannonmoeller/get-context.svg?style=flat-square
+[waffle-url]:    http://waffle.io/shannonmoeller/get-context
