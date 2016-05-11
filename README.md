@@ -1,6 +1,6 @@
 # `get-context`
 
-[![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Chat][gitter-img]][gitter-url]
+[![NPM version][npm-img]][npm-url] [![Downloads][downloads-img]][npm-url] [![Build Status][travis-img]][travis-url] [![Coverage Status][coveralls-img]][coveralls-url] [![Chat][gitter-img]][gitter-url] [![Tip][amazon-img]][amazon-url]
 
 Chainable canvas context api wrapper.
 
@@ -93,13 +93,13 @@ context.set({
 
 Licensed under [MIT](http://shannonmoeller.com/mit.txt)
 
+[amazon-img]:    https://img.shields.io/badge/amazon-tip_jar-yellow.svg?style=flat-square
+[amazon-url]:    https://www.amazon.com/gp/registry/wishlist/1VQM9ID04YPC5?sort=universal-price
 [coveralls-img]: http://img.shields.io/coveralls/shannonmoeller/get-context/master.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/r/shannonmoeller/get-context
 [downloads-img]: http://img.shields.io/npm/dm/get-context.svg?style=flat-square
 [gitter-img]:    http://img.shields.io/badge/gitter-join_chat-1dce73.svg?style=flat-square
 [gitter-url]:    https://gitter.im/shannonmoeller/shannonmoeller
-[gittip-img]:    http://img.shields.io/gittip/shannonmoeller.svg?style=flat-square
-[gittip-url]:    https://www.gittip.com/shannonmoeller
 [npm-img]:       http://img.shields.io/npm/v/get-context.svg?style=flat-square
 [npm-url]:       https://npmjs.org/package/get-context
 [travis-img]:    http://img.shields.io/travis/shannonmoeller/get-context.svg?style=flat-square
