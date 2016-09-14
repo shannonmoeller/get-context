@@ -1,6 +1,6 @@
 {
   "name": "get-context",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Chainable canvas.",
   "keywords": [
     "canvas",
@@ -31,13 +31,35 @@
     "harness": "mocha",
     "scripts": "test/all.js",
     "browsers": {
-      "android": [4],
-      "chrome": [30, 31, "canary"],
-      "ff": [24, 25, "nightly"],
-      "ie": [8, 9, 10, 11],
-      "ipad": [6],
-      "iphone": [6],
-      "safari": [5.1, 6]
+      "android": [
+        4
+      ],
+      "chrome": [
+        30,
+        31,
+        "canary"
+      ],
+      "ff": [
+        24,
+        25,
+        "nightly"
+      ],
+      "ie": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "ipad": [
+        6
+      ],
+      "iphone": [
+        6
+      ],
+      "safari": [
+        5.1,
+        6
+      ]
     }
   }
 }
