@@ -1,5 +1,4 @@
-!function(e){"object"==typeof exports?module.exports=e():"function"==typeof define&&define.amd?define(e):"undefined"!=typeof window?window.getContext=e():"undefined"!=typeof global?global.getContext=e():"undefined"!=typeof self&&(self.getContext=e())}(function(){var define,module,exports;
-return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
 /**
@@ -70,11 +69,13 @@ GetContext.prototype.get = function (key) {
 GetContext.prototype.resize = function (width, height) {
     var canvas = this.canvas;
     var context = this.context;
+    var ratio = this._getPixelRatio();
 
-    canvas.width = width;
-    canvas.height = height;
-    context.width = width;
-    context.height = height;
+    canvas.width = width * ratio;
+    canvas.height = height * ratio;
+
+    context.width = width * ratio;
+    context.height = height * ratio;
 
     return this;
 };
@@ -119,6 +120,11 @@ GetContext.prototype._setup = function (proto) {
     var context = this.context;
 
     var wrap = function (key) {
+        if ((/^(webkit|moz|ms)/).test(key)) {
+            // Ignore vendor-specific properties
+            return;
+        }
+
         if (typeof context[key] !== 'function') {
             // Nothing to do
             return;
@@ -143,6 +149,24 @@ GetContext.prototype._setup = function (proto) {
         .forEach(wrap);
 
     return true;
+};
+
+/**
+ * @method _getPixelRatio
+ * @private
+ */
+GetContext.prototype._getPixelRatio = function () {
+    if (typeof window === 'undefined') {
+        return 1;
+    }
+
+    if ('devicePixelRatio' in window) {
+        if (window.devicePixelRatio > 1) {
+            return window.devicePixelRatio;
+        }
+    }
+
+    return 1;
 };
 
 module.exports = GetContext;
@@ -182,7 +206,7 @@ util.inherits(GetContext2d, GetContext);
 
 module.exports = GetContext2d;
 
-},{"./GetContext":1,"util":6}],3:[function(require,module,exports){
+},{"./GetContext":1,"util":8}],3:[function(require,module,exports){
 'use strict';
 
 var GetContext = require('./GetContext');
@@ -195,7 +219,6 @@ var util = require('util');
  * @default false
  */
 var isReady3d = false;
-
 
 /**
  * Provides a friendlier interface for working with a 3D canvas rendering context.
@@ -218,7 +241,7 @@ util.inherits(GetContext3d, GetContext);
 
 module.exports = GetContext3d;
 
-},{"./GetContext":1,"util":6}],4:[function(require,module,exports){
+},{"./GetContext":1,"util":8}],4:[function(require,module,exports){
 'use strict';
 
 var GetContext = require('./GetContext');
@@ -250,224 +273,221 @@ getContext.GetContext3d = GetContext3d;
 module.exports = getContext;
 
 },{"./GetContext":1,"./GetContext2d":2,"./GetContext3d":3}],5:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
 
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
 
-//
-// The shims in this file are not fully implemented shims for the ES5
-// features, but do work for the particular usecases there is in
-// the other modules.
-//
+var cachedSetTimeout;
+var cachedClearTimeout;
 
-var toString = Object.prototype.toString;
-var hasOwnProperty = Object.prototype.hasOwnProperty;
-
-// Array.isArray is supported in IE9
-function isArray(xs) {
-  return toString.call(xs) === '[object Array]';
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
 }
-exports.isArray = typeof Array.isArray === 'function' ? Array.isArray : isArray;
-
-// Array.prototype.indexOf is supported in IE9
-exports.indexOf = function indexOf(xs, x) {
-  if (xs.indexOf) return xs.indexOf(x);
-  for (var i = 0; i < xs.length; i++) {
-    if (x === xs[i]) return i;
-  }
-  return -1;
-};
-
-// Array.prototype.filter is supported in IE9
-exports.filter = function filter(xs, fn) {
-  if (xs.filter) return xs.filter(fn);
-  var res = [];
-  for (var i = 0; i < xs.length; i++) {
-    if (fn(xs[i], i, xs)) res.push(xs[i]);
-  }
-  return res;
-};
-
-// Array.prototype.forEach is supported in IE9
-exports.forEach = function forEach(xs, fn, self) {
-  if (xs.forEach) return xs.forEach(fn, self);
-  for (var i = 0; i < xs.length; i++) {
-    fn.call(self, xs[i], i, xs);
-  }
-};
-
-// Array.prototype.map is supported in IE9
-exports.map = function map(xs, fn) {
-  if (xs.map) return xs.map(fn);
-  var out = new Array(xs.length);
-  for (var i = 0; i < xs.length; i++) {
-    out[i] = fn(xs[i], i, xs);
-  }
-  return out;
-};
-
-// Array.prototype.reduce is supported in IE9
-exports.reduce = function reduce(array, callback, opt_initialValue) {
-  if (array.reduce) return array.reduce(callback, opt_initialValue);
-  var value, isValueSet = false;
-
-  if (2 < arguments.length) {
-    value = opt_initialValue;
-    isValueSet = true;
-  }
-  for (var i = 0, l = array.length; l > i; ++i) {
-    if (array.hasOwnProperty(i)) {
-      if (isValueSet) {
-        value = callback(value, array[i], i, array);
-      }
-      else {
-        value = array[i];
-        isValueSet = true;
-      }
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
     }
-  }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
 
-  return value;
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
 };
 
-// String.prototype.substr - negative index don't work in IE8
-if ('ab'.substr(-1) !== 'b') {
-  exports.substr = function (str, start, length) {
-    // did we get a negative start, calculate how much it is from the beginning of the string
-    if (start < 0) start = str.length + start;
-
-    // call the original function
-    return str.substr(start, length);
-  };
-} else {
-  exports.substr = function (str, start, length) {
-    return str.substr(start, length);
-  };
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
 }
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
 
-// String.prototype.trim is supported in IE9
-exports.trim = function (str) {
-  if (str.trim) return str.trim();
-  return str.replace(/^\s+|\s+$/g, '');
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
 };
 
-// Function.prototype.bind is supported in IE9
-exports.bind = function () {
-  var args = Array.prototype.slice.call(arguments);
-  var fn = args.shift();
-  if (fn.bind) return fn.bind.apply(fn, args);
-  var self = args.shift();
-  return function () {
-    fn.apply(self, args.concat([Array.prototype.slice.call(arguments)]));
-  };
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
 };
-
-// Object.create is supported in IE9
-function create(prototype, properties) {
-  var object;
-  if (prototype === null) {
-    object = { '__proto__' : null };
-  }
-  else {
-    if (typeof prototype !== 'object') {
-      throw new TypeError(
-        'typeof prototype[' + (typeof prototype) + '] != \'object\''
-      );
-    }
-    var Type = function () {};
-    Type.prototype = prototype;
-    object = new Type();
-    object.__proto__ = prototype;
-  }
-  if (typeof properties !== 'undefined' && Object.defineProperties) {
-    Object.defineProperties(object, properties);
-  }
-  return object;
-}
-exports.create = typeof Object.create === 'function' ? Object.create : create;
-
-// Object.keys and Object.getOwnPropertyNames is supported in IE9 however
-// they do show a description and number property on Error objects
-function notObject(object) {
-  return ((typeof object != "object" && typeof object != "function") || object === null);
-}
-
-function keysShim(object) {
-  if (notObject(object)) {
-    throw new TypeError("Object.keys called on a non-object");
-  }
-
-  var result = [];
-  for (var name in object) {
-    if (hasOwnProperty.call(object, name)) {
-      result.push(name);
-    }
-  }
-  return result;
-}
-
-// getOwnPropertyNames is almost the same as Object.keys one key feature
-//  is that it returns hidden properties, since that can't be implemented,
-//  this feature gets reduced so it just shows the length property on arrays
-function propertyShim(object) {
-  if (notObject(object)) {
-    throw new TypeError("Object.getOwnPropertyNames called on a non-object");
-  }
-
-  var result = keysShim(object);
-  if (exports.isArray(object) && exports.indexOf(object, 'length') === -1) {
-    result.push('length');
-  }
-  return result;
-}
-
-var keys = typeof Object.keys === 'function' ? Object.keys : keysShim;
-var getOwnPropertyNames = typeof Object.getOwnPropertyNames === 'function' ?
-  Object.getOwnPropertyNames : propertyShim;
-
-if (new Error().hasOwnProperty('description')) {
-  var ERROR_PROPERTY_FILTER = function (obj, array) {
-    if (toString.call(obj) === '[object Error]') {
-      array = exports.filter(array, function (name) {
-        return name !== 'description' && name !== 'number' && name !== 'message';
-      });
-    }
-    return array;
-  };
-
-  exports.keys = function (object) {
-    return ERROR_PROPERTY_FILTER(object, keys(object));
-  };
-  exports.getOwnPropertyNames = function (object) {
-    return ERROR_PROPERTY_FILTER(object, getOwnPropertyNames(object));
-  };
-} else {
-  exports.keys = keys;
-  exports.getOwnPropertyNames = getOwnPropertyNames;
-}
-
-// Object.getOwnPropertyDescriptor - supported in IE8 but only on dom elements
-function valueObject(value, key) {
-  return { value: value[key] };
-}
-
-if (typeof Object.getOwnPropertyDescriptor === 'function') {
-  try {
-    Object.getOwnPropertyDescriptor({'a': 1}, 'a');
-    exports.getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
-  } catch (e) {
-    // IE8 dom element issue - use a try catch and default to valueObject
-    exports.getOwnPropertyDescriptor = function (value, key) {
-      try {
-        return Object.getOwnPropertyDescriptor(value, key);
-      } catch (e) {
-        return valueObject(value, key);
-      }
-    };
-  }
-} else {
-  exports.getOwnPropertyDescriptor = valueObject;
-}
+process.umask = function() { return 0; };
 
 },{}],6:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
+
+},{}],7:[function(require,module,exports){
+module.exports = function isBuffer(arg) {
+  return arg && typeof arg === 'object'
+    && typeof arg.copy === 'function'
+    && typeof arg.fill === 'function'
+    && typeof arg.readUInt8 === 'function';
+}
+},{}],8:[function(require,module,exports){
+(function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -488,8 +508,6 @@ if (typeof Object.getOwnPropertyDescriptor === 'function') {
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-var shims = require('_shims');
 
 var formatRegExp = /%[sdj%]/g;
 exports.format = function(f) {
@@ -529,6 +547,62 @@ exports.format = function(f) {
   }
   return str;
 };
+
+
+// Mark that a method should not be used.
+// Returns a modified function which warns once by default.
+// If --no-deprecation is set, then it is a no-op.
+exports.deprecate = function(fn, msg) {
+  // Allow for deprecating things in the process of starting up.
+  if (isUndefined(global.process)) {
+    return function() {
+      return exports.deprecate(fn, msg).apply(this, arguments);
+    };
+  }
+
+  if (process.noDeprecation === true) {
+    return fn;
+  }
+
+  var warned = false;
+  function deprecated() {
+    if (!warned) {
+      if (process.throwDeprecation) {
+        throw new Error(msg);
+      } else if (process.traceDeprecation) {
+        console.trace(msg);
+      } else {
+        console.error(msg);
+      }
+      warned = true;
+    }
+    return fn.apply(this, arguments);
+  }
+
+  return deprecated;
+};
+
+
+var debugs = {};
+var debugEnviron;
+exports.debuglog = function(set) {
+  if (isUndefined(debugEnviron))
+    debugEnviron = process.env.NODE_DEBUG || '';
+  set = set.toUpperCase();
+  if (!debugs[set]) {
+    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+      var pid = process.pid;
+      debugs[set] = function() {
+        var msg = exports.format.apply(exports, arguments);
+        console.error('%s %d: %s', set, pid, msg);
+      };
+    } else {
+      debugs[set] = function() {};
+    }
+  }
+  return debugs[set];
+};
+
 
 /**
  * Echos the value of a value. Trys to print the value out
@@ -616,7 +690,7 @@ function stylizeNoColor(str, styleType) {
 function arrayToHash(array) {
   var hash = {};
 
-  shims.forEach(array, function(val, idx) {
+  array.forEach(function(val, idx) {
     hash[val] = true;
   });
 
@@ -634,7 +708,7 @@ function formatValue(ctx, value, recurseTimes) {
       value.inspect !== exports.inspect &&
       // Also filter out any prototype objects using the circular check.
       !(value.constructor && value.constructor.prototype === value)) {
-    var ret = value.inspect(recurseTimes);
+    var ret = value.inspect(recurseTimes, ctx);
     if (!isString(ret)) {
       ret = formatValue(ctx, ret, recurseTimes);
     }
@@ -648,11 +722,18 @@ function formatValue(ctx, value, recurseTimes) {
   }
 
   // Look up the keys of the object.
-  var keys = shims.keys(value);
+  var keys = Object.keys(value);
   var visibleKeys = arrayToHash(keys);
 
   if (ctx.showHidden) {
-    keys = shims.getOwnPropertyNames(value);
+    keys = Object.getOwnPropertyNames(value);
+  }
+
+  // IE doesn't make error fields non-enumerable
+  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+  if (isError(value)
+      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    return formatError(value);
   }
 
   // Some type of object without properties can be shortcutted.
@@ -764,8 +845,7 @@ function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
       output.push('');
     }
   }
-
-  shims.forEach(keys, function(key) {
+  keys.forEach(function(key) {
     if (!key.match(/^\d+$/)) {
       output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
           key, true));
@@ -777,7 +857,7 @@ function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
 
 function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
   var name, str, desc;
-  desc = shims.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
   if (desc.get) {
     if (desc.set) {
       str = ctx.stylize('[Getter/Setter]', 'special');
@@ -789,12 +869,11 @@ function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
       str = ctx.stylize('[Setter]', 'special');
     }
   }
-
   if (!hasOwnProperty(visibleKeys, key)) {
     name = '[' + key + ']';
   }
   if (!str) {
-    if (shims.indexOf(ctx.seen, desc.value) < 0) {
+    if (ctx.seen.indexOf(desc.value) < 0) {
       if (isNull(recurseTimes)) {
         str = formatValue(ctx, desc.value, null);
       } else {
@@ -837,7 +916,7 @@ function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
 
 function reduceToSingleString(output, base, braces) {
   var numLinesEst = 0;
-  var length = shims.reduce(output, function(prev, cur) {
+  var length = output.reduce(function(prev, cur) {
     numLinesEst++;
     if (cur.indexOf('\n') >= 0) numLinesEst++;
     return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
@@ -859,7 +938,7 @@ function reduceToSingleString(output, base, braces) {
 // NOTE: These type checking functions intentionally don't use `instanceof`
 // because it is fragile and can be easily faked with `Object.create()`.
 function isArray(ar) {
-  return shims.isArray(ar);
+  return Array.isArray(ar);
 }
 exports.isArray = isArray;
 
@@ -904,7 +983,7 @@ function isRegExp(re) {
 exports.isRegExp = isRegExp;
 
 function isObject(arg) {
-  return typeof arg === 'object' && arg;
+  return typeof arg === 'object' && arg !== null;
 }
 exports.isObject = isObject;
 
@@ -914,7 +993,8 @@ function isDate(d) {
 exports.isDate = isDate;
 
 function isError(e) {
-  return isObject(e) && objectToString(e) === '[object Error]';
+  return isObject(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
 }
 exports.isError = isError;
 
@@ -933,14 +1013,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-function isBuffer(arg) {
-  return arg && typeof arg === 'object'
-    && typeof arg.copy === 'function'
-    && typeof arg.fill === 'function'
-    && typeof arg.binarySlice === 'function'
-  ;
-}
-exports.isBuffer = isBuffer;
+exports.isBuffer = require('./support/isBuffer');
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -984,23 +1057,13 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = function(ctor, superCtor) {
-  ctor.super_ = superCtor;
-  ctor.prototype = shims.create(superCtor.prototype, {
-    constructor: {
-      value: ctor,
-      enumerable: false,
-      writable: true,
-      configurable: true
-    }
-  });
-};
+exports.inherits = require('inherits');
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
   if (!add || !isObject(add)) return origin;
 
-  var keys = shims.keys(add);
+  var keys = Object.keys(add);
   var i = keys.length;
   while (i--) {
     origin[keys[i]] = add[keys[i]];
@@ -1012,7 +1075,5 @@ function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
 
-},{"_shims":5}]},{},[4])
-(4)
-});
-;
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":7,"_process":5,"inherits":6}]},{},[4]);
