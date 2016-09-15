@@ -12,11 +12,7 @@ With [Node.js](http://nodejs.org):
 
 With [Bower](http://bower.io):
 
-    $ bower install shannonmoeller/get-context
-
-With [Component](http://component.io):
-
-    $ component install shannonmoeller/get-context
+    $ bower install get-context
 
 ## API
 
@@ -82,6 +78,19 @@ context.set({
 });
 // returns context
 ```
+
+### `.resize(width, height)`
+
+Resizes the canvas element and rendering context respecting the device pixel ratio.
+
+```js
+context.resize(1024, 768);
+// returns context
+```
+
+### `.getPixelRatio()`
+
+Returns the current device pixel ratio, if available. Useful for handling responsive canvas elements and adjusting the current scale. Defaults to `1`.
 
 ## Test
 
