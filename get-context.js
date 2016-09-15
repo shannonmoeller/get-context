@@ -14,6 +14,11 @@ function Context(context) {
     }
 
     /**
+     * @property {HTMLCanvasElement} canvas
+     */
+    this.canvas = context.canvas;
+
+    /**
      * @property {CanvasRenderingContext} context
      */
     this.context = context;
