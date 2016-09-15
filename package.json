@@ -1,6 +1,6 @@
 {
   "name": "get-context",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Chainable canvas wrapper.",
   "keywords": [
     "2d",
