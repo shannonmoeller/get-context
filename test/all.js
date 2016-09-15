@@ -1,6 +1,8 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+var hasOwn = Object.prototype.hasOwnProperty;
+
 /**
  * Provides a friendlier interface for working with a canvas rendering context.
  *
@@ -25,6 +27,22 @@ function Context(context) {
 }
 
 /**
+ * Clears the canvas of any image data.
+ *
+ * @method clear
+ * @chainable
+ */
+Context.prototype.clear = function () {
+    var canvas = this.canvas;
+
+    return this
+        .save()
+        .setTransform(1, 0, 0, 1, 0, 0)
+        .clearRect(0, 0, canvas.width, canvas.height)
+        .restore();
+};
+
+/**
  * Gets one or more canvas property values.
  *
  * @method get
@@ -36,18 +54,18 @@ Context.prototype.get = function (key) {
     var length = null;
     var i = null;
 
-    if (typeof key === 'object') {
-        // Multiple values
-        value = {};
-        length = key.length;
-        i = 0;
+    // Single value
+    if (key !== null && typeof key !== 'object') {
+        return this.context[key];
+    }
 
-        for (; i < length; i++) {
-            value[key[i]] = this.get(key[i]);
-        }
-    } else {
-        // Single value
-        value = this.context[key];
+    // Multiple values
+    value = {};
+    length = key.length;
+    i = 0;
+
+    for (; i < length; i++) {
+        value[key[i]] = this.get(key[i]);
     }
 
     return value;
@@ -71,21 +89,17 @@ Context.prototype.getPixelRatio = function () {
  * @method resize
  * @param {Number} width
  * @param {Number} height
+ * @param {Number?} scale
  * @chainable
  */
-Context.prototype.resize = function (width, height) {
-    var context = this.context;
-    var canvas = context.canvas;
-
-    var ratio = this.getPixelRatio();
+Context.prototype.resize = function (width, height, scale) {
+    var canvas = this.canvas;
+    var ratio = scale || this.getPixelRatio();
     var scaledWidth = width * ratio;
     var scaledHeight = height * ratio;
 
     canvas.width = scaledWidth;
     canvas.height = scaledHeight;
-
-    context.width = scaledWidth;
-    context.height = scaledHeight;
 
     return this;
 };
@@ -99,19 +113,21 @@ Context.prototype.resize = function (width, height) {
  * @chainable
  */
 Context.prototype.set = function (key, value) {
-    if (typeof key === 'object') {
-        // Multiple values
-        value = key;
-        key = null;
-
-        for (key in value) {
-            if (value.hasOwnProperty(key)) {
-                this.set(key, value[key]);
-            }
-        }
-    } else {
-        // Single value
+    // Single value
+    if (key !== null && typeof key !== 'object') {
         this.context[key] = value;
+
+        return this;
+    }
+
+    // Multiple values
+    value = key;
+    key = null;
+
+    for (key in value) {
+        if (hasOwn.call(value, key)) {
+            this.set(key, value[key]);
+        }
     }
 
     return this;
