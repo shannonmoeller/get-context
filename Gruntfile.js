@@ -14,7 +14,7 @@ module.exports = function (grunt) {
         // Lint scripts
         jshint: {
             options: { jshintrc: '.jshintrc' },
-            all: ['Gruntfile.js', 'lib/**/*.js', 'test/**/test.*.js']
+            all: ['Gruntfile.js', 'lib/**/*.js', 'test/**/*.test.js']
         },
 
         // Bundle and wrap scripts
@@ -26,7 +26,7 @@ module.exports = function (grunt) {
             },
             test: {
                 options: { debug: true },
-                src: ['test/**/test.*.js'],
+                src: ['test/**/*.test.js'],
                 dest: 'test/all.js'
             }
         },
@@ -47,7 +47,7 @@ module.exports = function (grunt) {
         watch: {
             options: { livereload: true },
             js: {
-                files: ['lib/**/*.js', 'test/**/test.*.js'],
+                files: ['lib/**/*.js', 'test/**/*.test.js'],
                 tasks: ['js']
             }
         }

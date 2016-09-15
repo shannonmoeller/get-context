@@ -4,30 +4,20 @@
 /**
  * Provides a friendlier interface for working with a canvas rendering context.
  *
- * @class GetContext
- * @param {HTMLElement} canvas
+ * @class Context
  * @param {CanvasRenderingContext} context
  * @constructor
  */
-var GetContext = function (canvas, context) {
-    if (!canvas) {
-        throw new Error('Missing required `canvas` element.');
-    }
-
+function Context(context) {
     if (!context) {
         throw new Error('Missing required `context` object.');
     }
 
     /**
-     *
-     */
-    this.canvas = canvas;
-
-    /**
-     *
+     * @property {CanvasRenderingContext} context
      */
     this.context = context;
-};
+}
 
 /**
  * Gets one or more canvas property values.
@@ -36,7 +26,7 @@ var GetContext = function (canvas, context) {
  * @param {String|Array} key A property key, or an array of property keys.
  * @return {Any|Object} A property value, or an object of property-value pairs.
  */
-GetContext.prototype.get = function (key) {
+Context.prototype.get = function (key) {
     var value = null;
     var length = null;
     var i = null;
@@ -59,6 +49,18 @@ GetContext.prototype.get = function (key) {
 };
 
 /**
+ * @method getPixelRatio
+ * @return {Number}
+ */
+Context.prototype.getPixelRatio = function () {
+    if (typeof window === 'undefined') {
+        return 1;
+    }
+
+    return Math.max(1, window.devicePixelRatio || 0);
+};
+
+/**
  * Resizes the canvas element the way you expect.
  *
  * @method resize
@@ -66,16 +68,16 @@ GetContext.prototype.get = function (key) {
  * @param {Number} height
  * @chainable
  */
-GetContext.prototype.resize = function (width, height) {
-    var canvas = this.canvas;
+Context.prototype.resize = function (width, height) {
     var context = this.context;
-    var ratio = this._getPixelRatio();
+    var canvas = context.canvas;
 
-    canvas.width = width * ratio;
-    canvas.height = height * ratio;
+    var ratio = this.getPixelRatio();
+    var scaledWidth = width * ratio;
+    var scaledHeight = height * ratio;
 
-    context.width = width * ratio;
-    context.height = height * ratio;
+    canvas.width = scaledWidth;
+    canvas.height = scaledHeight;
 
     return this;
 };
@@ -88,7 +90,7 @@ GetContext.prototype.resize = function (width, height) {
  * @param {Any} [value]
  * @chainable
  */
-GetContext.prototype.set = function (key, value) {
+Context.prototype.set = function (key, value) {
     if (typeof key === 'object') {
         // Multiple values
         value = key;
@@ -116,7 +118,7 @@ GetContext.prototype.set = function (key, value) {
  * @return Boolean Whether wrapping was successful
  * @private
  */
-GetContext.prototype._setup = function (proto) {
+Context.prototype._setup = function (proto) {
     var context = this.context;
 
     var wrap = function (key) {
@@ -151,128 +153,100 @@ GetContext.prototype._setup = function (proto) {
     return true;
 };
 
-/**
- * @method _getPixelRatio
- * @private
- */
-GetContext.prototype._getPixelRatio = function () {
-    if (typeof window === 'undefined') {
-        return 1;
-    }
-
-    if ('devicePixelRatio' in window) {
-        if (window.devicePixelRatio > 1) {
-            return window.devicePixelRatio;
-        }
-    }
-
-    return 1;
-};
-
-module.exports = GetContext;
+module.exports = Context;
 
 },{}],2:[function(require,module,exports){
 'use strict';
 
-var GetContext = require('./GetContext');
-var util = require('util');
+var Context = require('./Context');
 
-/**
- * Whether the methods for a 2D canvas context object have been wrapped.
- *
- * @type Boolean
- * @default false
- */
+// Whether the methods for a 3D canvas context object have been wrapped.
 var isReady2d = false;
 
 /**
- * Provides a friendlier interface for working with a 2D canvas rendering context.
+ * Provides a friendlier interface for working with a 2D rendering context.
  *
- * @class GetContext2d
- * @param {HTMLElement} canvas
+ * @class Context2d
+ * @param {HTMLCanvasElement} canvas
  * @constructor
  */
-var GetContext2d = function (canvas) {
+function Context2d(canvas) {
     var context = canvas && canvas.getContext('2d');
 
-    GetContext.call(this, canvas, context);
+    Context.call(this, context);
 
     if (!isReady2d) {
-        isReady2d = this._setup(GetContext2d.prototype);
+        isReady2d = this._setup(Context2d.prototype);
     }
-};
+}
 
-util.inherits(GetContext2d, GetContext);
+Context2d.prototype = Object.create(Context.prototype);
+Context2d.prototype.constructor = Context2d;
 
-module.exports = GetContext2d;
+module.exports = Context2d;
 
-},{"./GetContext":1,"util":9}],3:[function(require,module,exports){
+},{"./Context":1}],3:[function(require,module,exports){
 'use strict';
 
-var GetContext = require('./GetContext');
-var util = require('util');
+var Context = require('./Context');
 
-/**
- * Whether the methods for a 3D canvas context object have been wrapped.
- *
- * @type Boolean
- * @default false
- */
+// Whether the methods for a 3D canvas context object have been wrapped.
 var isReady3d = false;
 
 /**
- * Provides a friendlier interface for working with a 3D canvas rendering context.
+ * Provides a friendlier interface for working with a 3D rendering context.
  *
- * @class GetContext3d
- * @param {HTMLElement} canvas
+ * @class Context3d
+ * @param {HTMLCanvasElement} canvas
  * @constructor
  */
-var GetContext3d = function (canvas) {
+function Context3d(canvas) {
     var context = canvas && canvas.getContext('webgl');
 
-    GetContext.call(this, canvas, context);
+    Context.call(this, context);
 
     if (!isReady3d) {
-        isReady3d = this._setup(GetContext3d.prototype);
+        isReady3d = this._setup(Context3d.prototype);
     }
-};
+}
 
-util.inherits(GetContext3d, GetContext);
+Context3d.prototype = Object.create(Context.prototype);
+Context3d.prototype.constructor = Context3d;
 
-module.exports = GetContext3d;
+module.exports = Context3d;
 
-},{"./GetContext":1,"util":9}],4:[function(require,module,exports){
+},{"./Context":1}],4:[function(require,module,exports){
 'use strict';
 
-var GetContext = require('./GetContext');
-var GetContext2d = require('./GetContext2d');
-var GetContext3d = require('./GetContext3d');
+var Context = require('./Context');
+var Context2d = require('./Context2d');
+var Context3d = require('./Context3d');
 
 /**
- * A canvas wrapper maker function.
+ * Canvas context factory.
  *
- * @type Function
- * @param {HTMLElement} canvas
+ * @method getContext
+ * @param {HTMLCanvasElement} canvas
  * @param {String} [type='2d']
- * @return GetContext
+ * @return Context
  */
-var getContext = function (canvas, type) {
+function getContext(canvas, type) {
     if (type === 'webgl') {
         // 3D Context
-        return new GetContext3d(canvas);
-    } else {
-        // 2D Context
-        return new GetContext2d(canvas);
+        return new Context3d(canvas);
     }
-};
 
-getContext.GetContext = GetContext;
-getContext.GetContext2d = GetContext2d;
-getContext.GetContext3d = GetContext3d;
+    // 2D Context
+    return new Context2d(canvas);
+}
+
+getContext.Context = Context;
+getContext.Context2d = Context2d;
+getContext.Context3d = Context3d;
 
 module.exports = getContext;
 
-},{"./GetContext":1,"./GetContext2d":2,"./GetContext3d":3}],5:[function(require,module,exports){
+},{"./Context":1,"./Context2d":2,"./Context3d":3}],5:[function(require,module,exports){
 // http://wiki.commonjs.org/wiki/Unit_Testing/1.0
 //
 // THIS IS NOT TESTED NOR LIKELY TO WORK OUTSIDE V8!
@@ -1449,7 +1423,8 @@ var Image = global.Image;
 var document = global.document;
 var body = document && document.body;
 
-var MockContext = function () {
+var MockContext = function (canvas) {
+    this.canvas = canvas;
     this.fillStyle = '#000000';
     this.strokeStyle = '#000000';
 };
@@ -1466,7 +1441,7 @@ var MockCanvas = function () {};
 MockCanvas.prototype = {
     constructor: MockCanvas,
     getContext: function () {
-        return new MockContext();
+        return new MockContext(this);
     }
 };
 
@@ -1539,7 +1514,7 @@ describe('getContext', function () {
         if (Image) {
             img = new Image();
             img.onload = onload;
-            img.src = 'mask.png';
+            img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAAAAAAALAAAAAABAAEAAAICTAEAOw==';
             return;
         }
 

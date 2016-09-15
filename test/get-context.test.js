@@ -8,7 +8,8 @@ var Image = global.Image;
 var document = global.document;
 var body = document && document.body;
 
-var MockContext = function () {
+var MockContext = function (canvas) {
+    this.canvas = canvas;
     this.fillStyle = '#000000';
     this.strokeStyle = '#000000';
 };
@@ -25,7 +26,7 @@ var MockCanvas = function () {};
 MockCanvas.prototype = {
     constructor: MockCanvas,
     getContext: function () {
-        return new MockContext();
+        return new MockContext(this);
     }
 };
 
@@ -98,7 +99,7 @@ describe('getContext', function () {
         if (Image) {
             img = new Image();
             img.onload = onload;
-            img.src = 'mask.png';
+            img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAAAAACH5BAAAAAAALAAAAAABAAEAAAICTAEAOw==';
             return;
         }
 
