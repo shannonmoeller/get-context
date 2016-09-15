@@ -1,6 +1,6 @@
 {
   "name": "get-context",
-  "version": "0.2.0",
+  "description": "Chainable canvas wrapper.",
   "main": "get-context.js",
   "ignore": ["./!(get-context.js)"]
 }

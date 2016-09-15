@@ -1,17 +1,28 @@
 {
   "name": "get-context",
   "version": "1.0.0",
-  "description": "Chainable canvas.",
+  "description": "Chainable canvas wrapper.",
   "keywords": [
+    "2d",
+    "3d",
     "canvas",
-    "chain"
+    "chain",
+    "context",
+    "jquery"
   ],
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/shannonmoeller/get-context.git"
+  "repository": "shannonmoeller/get-context",
+  "homepage": "https://github.com/shannonmoeller/get-context#readme",
+  "author": {
+    "name": "Shannon Moeller",
+    "email": "me@shannonmoeller.com",
+    "url": "http://shannonmoeller.com"
   },
   "main": "lib/get-context.js",
+  "files": [
+    "lib",
+    "*.js"
+  ],
   "devDependencies": {
     "grunt": "*",
     "grunt-browserify": "*",
