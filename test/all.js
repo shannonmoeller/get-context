@@ -84,6 +84,9 @@ Context.prototype.resize = function (width, height) {
     canvas.width = scaledWidth;
     canvas.height = scaledHeight;
 
+    context.width = scaledWidth;
+    context.height = scaledHeight;
+
     return this;
 };
 
