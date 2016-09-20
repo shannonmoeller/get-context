@@ -184,7 +184,7 @@ module.exports = Context;
 
 var Context = require('./Context');
 
-// Whether the methods for a 3D canvas context object have been wrapped.
+// Whether the methods for a 2D canvas context object have been wrapped.
 var isReady2d = false;
 
 /**
