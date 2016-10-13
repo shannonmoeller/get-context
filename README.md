@@ -107,7 +107,5 @@ Licensed under [MIT](http://shannonmoeller.com/mit.txt)
 [downloads-img]: http://img.shields.io/npm/dm/get-context.svg?style=flat-square
 [npm-img]:       http://img.shields.io/npm/v/get-context.svg?style=flat-square
 [npm-url]:       https://npmjs.org/package/get-context
-[travis-img]:    http://img.shields.io/travis/shannonmoeller/get-context.svg?style=flat-square
+[travis-img]:    http://img.shields.io/travis/shannonmoeller/get-context/master.svg?style=flat-square
 [travis-url]:    https://travis-ci.org/shannonmoeller/get-context
-[waffle-img]:    http://img.shields.io/github/issues/shannonmoeller/get-context.svg?style=flat-square
-[waffle-url]:    http://waffle.io/shannonmoeller/get-context
