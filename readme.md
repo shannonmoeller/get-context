@@ -98,9 +98,7 @@ Returns the current device pixel ratio, if available. Useful for handling respon
 
 ----
 
-© 2015 Shannon Moeller <me@shannonmoeller.com>
-
-Licensed under [MIT](http://shannonmoeller.com/mit.txt)
+MIT © [Shannon Moeller](http://shannonmoeller.com)
 
 [amazon-img]:    https://img.shields.io/badge/amazon-tip_jar-yellow.svg?style=flat-square
 [amazon-url]:    https://www.amazon.com/gp/registry/wishlist/1VQM9ID04YPC5?sort=universal-price
